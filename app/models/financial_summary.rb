@@ -5,22 +5,17 @@ class FinancialSummary
     attr_accessor :transactions
 
     def one_day params
-      transactions = Transaction.where(user: user(params), amount_currency: currency(params))
-                                .where('created_at >= ?', 1.day.ago)
-      self.transactions = transactions
+      self.transactions = get_transactions(params).where('created_at >= ?', 1.day.ago)
       self
     end
 
     def seven_days params
-      transactions = Transaction.where(user: user(params), amount_currency: currency(params))
-                                .where('created_at >= ?', 7.days.ago)
-      self.transactions = transactions
+      self.transactions = get_transactions(params).where('created_at >= ?', 7.days.ago)
       self
     end
 
     def lifetime params
-      transactions = Transaction.where(user: user(params), amount_currency: currency(params))
-      self.transactions = transactions
+      self.transactions = get_transactions(params)
       self
     end
 
@@ -33,6 +28,10 @@ class FinancialSummary
     end
 
     private
+
+    def get_transactions params
+      Transaction.where(user: user(params), amount_currency: currency(params))
+    end
 
     def user params
       params[:user]
